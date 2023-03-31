@@ -10,27 +10,21 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"net/http"
-	"strconv"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	// リクエストからqualityのパラメータを取得する
-	qualityStr := request.QueryStringParameters["quality"]
+	// quality は元の oyaki と合わせて決めうち
+	quality := 90
 
-	// qualityのパラメータを数値に変換する
-	quality, err := strconv.Atoi(qualityStr)
-	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusBadRequest,
-			Body:       "Invalid quality parameter",
-		}, nil
-	}
+	// Origin は 環境変数からとる
+	originHost := os.Getenv("OYAKI_ORIGIN_HOST")
+	path := request.Path
 
-	// URLのパラメータから画像URLを取得する
-	url := request.QueryStringParameters["url"]
+	url := "https://" + originHost + path
 
 	// 画像をダウンロードする
 	resp, err := http.Get(url)
