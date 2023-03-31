@@ -24,6 +24,10 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	// Origin は 環境変数からとる
 	originHost := os.Getenv("OYAKI_ORIGIN_HOST")
 
+	// path の先頭には API GATEWAY のステージ名が入ってくるので抜く
+	//	re := regexp.MustCompile(`/\w+/`)
+	//	path := re.ReplaceAllString(request.Path, "/")
+
 	url := "https://" + originHost + request.RequestContext.Path
 
 	// 画像をダウンロードする
