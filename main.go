@@ -11,6 +11,7 @@ import (
 	_ "image/png"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -36,11 +37,21 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	defer resp.Body.Close()
 
 	// 画像デコード
-	srcImage, _, err := image.Decode(resp.Body)
-	if err != nil {
+	var srcImage image.Image
+	contentType := resp.Header.Get("Content-Type")
+	switch {
+	case strings.Contains(contentType, "jpeg"):
+		srcImage, err = jpeg.Decode(resp.Body)
+		if err != nil {
+			return events.APIGatewayProxyResponse{
+				StatusCode: http.StatusBadRequest,
+				Body:       fmt.Sprintf("Failed to decode image: %s", err.Error()),
+			}, nil
+		}
+	default:
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusBadRequest,
-			Body:       fmt.Sprintf("Failed to decode image: %s", err.Error()),
+			Body:       fmt.Sprintf("Not supported image: %s", err.Error()),
 		}, nil
 	}
 
