@@ -57,8 +57,10 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	// Base64エンコードされた文字列としてレスポンスを返す
 	resizedImageString := base64.StdEncoding.EncodeToString(buf.Bytes())
 	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusOK,
-		Body:       resizedImageString,
+		StatusCode:      http.StatusOK,
+		Headers:         map[string]string{"Content-Type": "image/jpeg"},
+		Body:            resizedImageString,
+		IsBase64Encoded: true,
 	}, nil
 }
 
