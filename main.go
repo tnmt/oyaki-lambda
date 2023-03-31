@@ -50,6 +50,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	// 画像デコード
 	var srcImage image.Image
 	contentType := resp.Header.Get("Content-Type")
+	// jpeg だけ
 	switch {
 	case strings.Contains(contentType, "jpeg"):
 		srcImage, err = jpeg.Decode(resp.Body)
