@@ -79,7 +79,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	// prepare response header
 	rh := map[string]string{}
-	rh["Content-Type"] = "image/jpeg"
+	rh["Content-Type"] = resp.Header.Get("Content-Type")
 	rh["Access-Control-Allow-Origin"] = "*/*"
 	if resp.Header.Get("Last-Modified") != "" {
 		rh["Last-Modified"] = resp.Header.Get("Last-Modified")
